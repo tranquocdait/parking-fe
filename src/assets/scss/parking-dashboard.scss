@@ -1,30 +1,25 @@
 // =========================================================
-// * Argon Dashboard 2 Pro - v2.0.0
+// * Parking management - v1.0.0
 // =========================================================
 //
-// * Product Page: https://www.creative-tim.com/product/argon-dashboard-pro
-// * Copyright 2021 Creative Tim (https://www.creative-tim.com)
-//
-// Coded by www.creative-tim.com
+// Coded by Tran Thi Huyen Dieu
 //
 // =========================================================
-//
-// * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 // Bootstrap Functions
-@import "argon-dashboard/bootstrap/functions";
+@import "parking-dashboard/bootstrap/functions";
 
 // Custom Variables
-@import "argon-dashboard/custom/variables";
+@import "parking-dashboard/custom/variables";
 
 // Theme Variables
-@import "argon-dashboard/variables";
+@import "parking-dashboard/variables";
 
 // Bootstrap Core
-@import "argon-dashboard/bootstrap/bootstrap";
+@import "parking-dashboard/bootstrap/bootstrap";
 
 // Theme Core
-@import "argon-dashboard/theme-pro";
+@import "parking-dashboard/theme-pro";
 
 // Custom Variables
-@import "argon-dashboard/custom/styles";
+@import "parking-dashboard/custom/styles";

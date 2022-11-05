@@ -12,7 +12,7 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "/dashboard-default",
+    redirect: localStorage.getItem("token") ? "/dashboard-default" : "/signup",
   },
   {
     path: "/dashboard-default",

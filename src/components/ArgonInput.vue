@@ -10,9 +10,10 @@
         :class="getClasses(size, valid)"
         :name="name"
         :id="id"
-        :value="value"
+        :value="modelValue"
         :placeholder="placeholder"
         :isRequired="isRequired"
+        @input="updateValue"
       />
       <span v-if="iconDir === 'right'" class="input-group-text">
         <i :class="getIcon(icon)"></i>
@@ -37,7 +38,7 @@ export default {
     iconDir: String,
     name: String,
     id: String,
-    value: String,
+    modelValue: String,
     placeholder: String,
     type: String,
     isRequired: Boolean,
@@ -54,6 +55,9 @@ export default {
     },
     getIcon: (icon) => (icon ? icon : null),
     hasIcon: (icon) => (icon ? "input-group" : null),
+    updateValue(event) {
+      this.$emit('update:modelValue', event.target.value);
+    }
   },
 };
 </script>
