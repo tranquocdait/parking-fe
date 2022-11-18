@@ -98,8 +98,10 @@ export default {
         "user_name": this.username,
         "password": this.password
       }, 'sign-in');
-      StorageService.storageToken(data.data);
-      alert(StorageService.getToken());
+      if (data.status == 200) {
+        StorageService.storageToken(data.data);
+        window.location.href = '/qr-code';
+      }
     }
   }
 };

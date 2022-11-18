@@ -7,6 +7,7 @@ import RTL from "../views/Rtl.vue";
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import Signin from "../views/Signin.vue";
+import QRCode from "../views/QRCode.vue";
 
 const routes = [
   {
@@ -53,6 +54,11 @@ const routes = [
     path: "/signup",
     name: "Signup",
     component: Signup,
+  },
+  {
+    path: "/qr-code",
+    name: "QR Code",
+    component: QRCode,
   },
   
 ];

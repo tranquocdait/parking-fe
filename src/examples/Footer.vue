@@ -11,15 +11,15 @@
             {{ new Date().getFullYear() }}, made with
             <i class="fa fa-heart"></i> by
             <a
-              href="https://www.creative-tim.com"
+              href="https://www.facebook.com/profile.php?id=100057105836637"
               class="font-weight-bold"
               target="_blank"
-              >Creative Tim</a
+              >Tran Thi Huyen Dieu</a
             >
-            for a better web.
+            for a parking management web.
           </div>
         </div>
-        <div class="col-lg-6">
+        <!-- <div class="col-lg-6">
           <ul
             class="nav nav-footer justify-content-center justify-content-lg-end"
           >
@@ -56,7 +56,7 @@
               >
             </li>
           </ul>
-        </div>
+        </div> -->
       </div>
     </div>
   </footer>

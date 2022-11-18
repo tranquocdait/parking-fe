@@ -306,7 +306,6 @@ export default {
     changeRegisterDate() {
       const dArr = this.registerDatePicker.split("-");  // ex input: "2010-01-18"
       this.registerDate = dArr[2]+ "/" +dArr[1]+ "/" +dArr[0];
-      debugger
     },
 
     switchMode() {
@@ -337,11 +336,11 @@ export default {
         "district": this.district,
         "address": this.address,
 
-      }, 'sign-upaaaaaaa');
+      }, 'sign-up');
       if (data.status == 200) {
         this.TogglePopup('timedTrigger');
         setTimeout(() => {
-          window.location.href = '/signup';
+          window.location.href = '/signin';
         }, 4000);
       }
     },
