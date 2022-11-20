@@ -34,41 +34,6 @@
           </div>
         </div>
         <ul class="navbar-nav justify-content-end">
-          <li class="nav-item d-flex align-items-center">
-            <router-link
-              :to="{ name: 'Signin' }"
-              class="px-0 nav-link font-weight-bold text-white"
-              target="_blank"
-            >
-              <i
-                class="fa fa-user"
-                :class="this.$store.state.isRTL ? 'ms-sm-2' : 'me-sm-2'"
-              ></i>
-              <span v-if="this.$store.state.isRTL" class="d-sm-inline d-none"
-                >يسجل دخول</span
-              >
-              <span v-else class="d-sm-inline d-none">Sign In</span>
-            </router-link>
-          </li>
-          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-            <a
-              href="#"
-              @click="toggleSidebar"
-              class="p-0 nav-link text-white"
-              id="iconNavbarSidenav"
-            >
-              <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line bg-white"></i>
-                <i class="sidenav-toggler-line bg-white"></i>
-                <i class="sidenav-toggler-line bg-white"></i>
-              </div>
-            </a>
-          </li>
-          <li class="px-3 nav-item d-flex align-items-center">
-            <a class="p-0 nav-link text-white" @click="toggleConfigurator">
-              <i class="cursor-pointer fa fa-cog fixed-plugin-button-nav"></i>
-            </a>
-          </li>
           <li
             class="nav-item dropdown d-flex align-items-center"
             :class="this.$store.state.isRTL ? 'ps-2' : 'pe-2'"
@@ -192,6 +157,58 @@
               </li>
             </ul>
           </li>
+          <li
+            class="nav-item dropdown d-flex align-items-center"
+            :class="this.$store.state.isRTL ? 'ps-2' : 'pe-2'"
+          >
+            <a
+              href="#"
+              class="p-0 nav-link text-white"
+              :class="[showMenu ? 'show' : '']"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              @click="showUser = !showUser"
+            >
+              <i class="cursor-pointer fa fa-user"></i>
+            </a>
+            <ul
+              class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4"
+              :class="showUser ? 'show' : ''"
+              aria-labelledby="dropdownMenuButton"
+            >
+              <li class="nav-item d-flex align-items-center">
+                <a class="dropdown-item border-radius-md" href="./profile">
+                  <div class="py-1 d-flex">
+                    <div class="my-auto">
+                      <i class="fa fa-user fa-lg pe-2"></i>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-1 text-sm font-weight-normal">
+                        Profile
+                      </h6>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li class="border-bottom-nav">
+              </li>
+              <li class="nav-item d-flex align-items-center">
+                <a class="dropdown-item border-radius-md" href="./signin">
+                  <div class="py-1 d-flex">
+                    <div class="my-auto">
+                      <i class="fa fa-sign-out fa-lg pe-2"></i>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-1 text-sm font-weight-normal">
+                        Log out
+                      </h6>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
@@ -205,7 +222,8 @@ export default {
   name: "navbar",
   data() {
     return {
-      showMenu: false
+      showMenu: false,
+      showUser: false,
     };
   },
   props: ["minNav", "textWhite"],
@@ -231,3 +249,16 @@ export default {
   }
 };
 </script>
+<style lang='scss' scoped>
+.pe-2 {
+  padding-right: 1.5rem !important;
+}
+
+.border-bottom-nav{
+  border-bottom: 1px solid;
+}
+
+ul.px-2.py-3.dropdown-menu.dropdown-menu-end.me-sm-n4 {
+  top: 0 !important;
+}
+</style>

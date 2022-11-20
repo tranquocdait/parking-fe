@@ -4,7 +4,7 @@
     id="sidenav-collapse-main"
   >
     <ul class="navbar-nav">
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <sidenav-item
           url="/dashboard-default"
           :class="getRoute() === 'dashboard-default' ? 'active' : ''"
@@ -14,12 +14,12 @@
             <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
           </template>
         </sidenav-item>
-      </li>
+      </li> -->
       <li class="nav-item">
         <sidenav-item
-          url="/tables"
-          :class="getRoute() === 'tables' ? 'active' : ''"
-          :navText="this.$store.state.isRTL ? 'الجداول' : 'Tables'"
+          url="/manage"
+          :class="getRoute() === 'manage' ? 'active' : ''"
+          :navText="'Parking management'"
         >
           <template v-slot:icon>
             <i
@@ -28,7 +28,28 @@
           </template>
         </sidenav-item>
       </li>
+      <li class="mt-3 nav-item">
+        <h6
+          class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
+          :class="this.$store.state.isRTL ? 'me-4' : 'ms-2'"
+        >
+          QR code
+        </h6>
+      </li>
       <li class="nav-item">
+        <sidenav-item
+          url="/qr-code"
+          :class="getRoute() === 'qr-code' ? 'active' : ''"
+          :navText="'QR code'"
+        >
+          <template v-slot:icon>
+            <i
+              class="ni ni-credit-card text-success text-sm opacity-10"
+            ></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <!-- <li class="nav-item">
         <sidenav-item
           url="/billing"
           :class="getRoute() === 'billing' ? 'active' : ''"
@@ -111,20 +132,20 @@
             <i class="ni ni-collection text-info text-sm opacity-10"></i>
           </template>
         </sidenav-item>
-      </li>
+      </li> -->
     </ul>
   </div>
-  <div class="pt-3 mx-3 mt-3 sidenav-footer">
+  <!-- <div class="pt-3 mx-3 mt-3 sidenav-footer">
     <sidenav-card
       :class="cardBg"
       textPrimary="Need Help?"
       textSecondary="Please check our docs"
     />
-  </div>
+  </div> -->
 </template>
 <script>
 import SidenavItem from "./SidenavItem.vue";
-import SidenavCard from "./SidenavCard.vue";
+// import SidenavCard from "./SidenavCard.vue";
 
 export default {
   name: "SidenavList",
@@ -140,7 +161,7 @@ export default {
   },
   components: {
     SidenavItem,
-    SidenavCard
+    // SidenavCard
   },
   methods: {
     getRoute() {

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import Tables from "../views/Tables.vue";
+import ParkingManagement from "../views/ParkingManagement.vue";
 import Billing from "../views/Billing.vue";
 import VirtualReality from "../views/VirtualReality.vue";
 import RTL from "../views/Rtl.vue";
@@ -13,7 +14,7 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: localStorage.getItem("token") ? "/dashboard-default" : "/signup",
+    redirect: localStorage.getItem("token") ? "/manage" : "/signin",
   },
   {
     path: "/dashboard-default",
@@ -24,6 +25,11 @@ const routes = [
     path: "/tables",
     name: "Tables",
     component: Tables,
+  },
+  {
+    path: "/manage",
+    name: "Management",
+    component: ParkingManagement,
   },
   {
     path: "/billing",

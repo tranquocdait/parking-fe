@@ -100,7 +100,7 @@ export default {
       }, 'sign-in');
       if (data.status == 200) {
         StorageService.storageToken(data.data);
-        window.location.href = '/qr-code';
+        window.location.href = '/manage';
       }
     }
   }
