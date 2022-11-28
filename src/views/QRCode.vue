@@ -6,12 +6,11 @@
     <main class="mt-1 main-content border-radius-lg">
       <div class="section min-vh-85 position-relative transform-scale-0 transform-scale-md-7 text-center">
         <img :style="{width: '800px'}"
-          :src="`data:image/png;base64, ${qaCode}` " />
+          :src="`data:image/png;base64, ${qrCode}` " />
       </div>
     </main>
   </div>
   <app-footer class="py-3 bg-white border-radius-lg" />
-  <button class="btn btn-success" v-on:click="sendMessage('hello')">Send Message</button>
 </template>
 
 <script>
@@ -30,8 +29,7 @@ export default {
   },
   data() {
     return {
-      qaCode: '',
-      connection: null,
+      qrCode: '',
     }
   },
 
@@ -40,18 +38,15 @@ export default {
   },
 
   methods: {
-    sendMessage: function(message) {
-      console.log(this.connection);
-      this.connection.send(message);
-    },
 
     async getData() {
       const { data } = await QRCodeRepository.get('generate');
       if (data.status == 200) {
-        this.qaCode = data.data
+        this.qrCode = data.data
       }
     }
   },
+
   beforeMount() {
     this.$store.state.layout = "vr";
     this.$store.state.showNavbar = false;
@@ -60,6 +55,7 @@ export default {
     body.classList.add("virtual-reality");
     this.$store.state.isTransparent = "bg-white";
   },
+
   beforeUnmount() {
     this.$store.state.layout = "default";
     this.$store.state.showNavbar = true;
@@ -75,6 +71,7 @@ export default {
     }
     this.$store.state.isTransparent = "bg-transparent";
   },
+  
   computed: {
     isTransparent() {
       return this.$store.state.isTransparent;

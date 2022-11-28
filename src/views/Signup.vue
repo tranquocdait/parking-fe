@@ -137,7 +137,7 @@
                           placeholder="Danang" 
                           v-model="province"
                           name="province" 
-                          label="City/Province"
+                          label="City/ Province"
                           col="6"
                           size="lg" />
                         <parking-input 
@@ -153,7 +153,7 @@
                           placeholder="Hoa Quy" 
                           v-model="commune"
                           name="commune" 
-                          label="Ward/Commune"
+                          label="Ward/ Commune"
                           col="6"
                           size="lg" />
                         <parking-input 
@@ -169,8 +169,8 @@
                     <!-- <b-button v-b-modal.modaltwo>Modaltwo</b-button>
                     <b-modal id="modaltwo">Hello Modal Two</b-modal> -->
                     <div class="text-center">
-                      <argon-button class="mt-4" variant="gradient" color="success" fullWidth size="lg"
-                        @click="(event) => signUp(event)">Sign up</argon-button>
+                      <parking-button class="mt-4" variant="gradient" color="success" fullWidth size="lg"
+                        @click="(event) => signUp(event)">Sign up</parking-button>
                     </div>
                   </form>
                 </div>
@@ -204,7 +204,7 @@
 <script>
 import ParkingInput from "@/components/ParkingInput.vue";
 import ParkingRadio from "@/components/ParkingRadio.vue";
-import ArgonButton from "@/components/ArgonButton.vue";
+import ParkingButton from "@/components/ParkingButton.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 import Popup from '@/components/Popup.vue';
 import moment from 'moment';
@@ -234,7 +234,7 @@ export default {
   name: "signin",
   components: {
     ParkingInput,
-    ArgonButton,
+    ParkingButton,
     ParkingRadio,
     Popup
   },

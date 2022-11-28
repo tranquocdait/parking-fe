@@ -3,8 +3,28 @@
     <div class=" row">
       <div class="col-12">
         <div class="card">
-          <div class="card-header pb-0">
+          <div class="card-header d-flex pb-0">
             <h6>Parking management</h6>
+            <div class="input-group">
+              <span class="input-group-text text-body">
+                <i class="fas fa-search" aria-hidden="true"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control text-border"
+                v-model="keyword"
+                placeholder="Type here..."
+                v-on:keyup.enter="search()"
+                style="border-right: 1px solid #e9ecef !important;"
+              />
+              <span class="space-span"></span>
+              <select class="form-select" aria-label="Default select example">
+                <option selected>---Status---</option>
+                <option value="check-in">Check in</option>
+                <option value="check-out">Check out</option>
+              </select>
+              <parking-button color="success" size="sm" class="ms-auto"  @click="search()">Search</parking-button>
+            </div>
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
@@ -12,11 +32,12 @@
                 <thead>
                   <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Vehicel</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Model</th>
                     <th>
-                      <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 mb-0">Check in</p>
-                      <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 mb-0">Check out</p>
+                      <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 mb-0">Branch</p>
+                      <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 mb-0">Model</p>
                     </th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Check in</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Check out</th>
                     <!-- <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Payment type</th> -->
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                     <th class="text-secondary opacity-7"></th>
@@ -34,8 +55,10 @@
                         <p class="text-xs font-weight-bold text-secondary mb-0">{{item.vehicle_Model}}</p>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0 text-success">{{item.check_in_date}}</p>
-                        <p class="text-xs font-weight-bold text-danger mb-0">{{pipeString(item.check_out_date)}}</p>
+                        <p class="text-xs font-weight-bold mb-0">{{item.check_in_date}}</p>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0">{{pipeString(item.check_out_date)}}</p>
                       </td>
                       <!-- <td>
                         <h6 class="mb-0 text-sm">Free</h6>
@@ -66,15 +89,18 @@
 </template>
 
 <script>
+import ParkingButton from "@/components/ParkingButton.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 const ParkingRepository = RepositoryFactory.get('parking')
 export default {
   name: "tables",
   components: {
+    ParkingButton
   },
 
   data() {
     return {
+      keyword: '',
       data_list: null,
     };
   },
@@ -84,11 +110,15 @@ export default {
   },
 
   methods: {
+    search() {
+      this.getData();
+    },
+
     async getData() {
       const { data } = await ParkingRepository.post({
-        'keyword': '',
         'page': 0,
-        'page_size': 100
+        'page_size': 100,
+        'keyword': this.keyword
       }, 'tracking-management');
       if (data.status == 200) {
         this.data_list = data.data.data_list
@@ -108,5 +138,18 @@ export default {
 <style lang='scss' scoped>
 .first-col {
   padding-left: 12px;
+}
+
+.card-header {
+  &.d-flex {
+    justify-content: space-between;
+  }
+
+  .input-group {
+    width: 50%;
+    .space-span {
+      width: 2px;
+    }
+  }
 }
 </style>

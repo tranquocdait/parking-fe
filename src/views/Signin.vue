@@ -13,15 +13,28 @@
                 <div class="card-body">
                   <form role="form">
                     <div class="mb-3">
-                      <argon-input type="input" placeholder="User name" v-model="username" name="username" size="lg"/>
+                      <parking-input 
+                        type="input"
+                        placeholder="User name"
+                        v-model="username"
+                        name="username"
+                        size="lg"
+                        :valid="isValidUsername" 
+                        label="User name" />
                     </div>
                     <div class="mb-3">
-                      <argon-input type="password" placeholder="Password" v-model="password" name="password" size="lg" />
+                      <parking-input 
+                        type="password" 
+                        placeholder="Password" 
+                        v-model="password" 
+                        name="password"
+                        label="Password"
+                        size="lg" />
                     </div>
                     <argon-switch id="rememberMe">Remember me</argon-switch>
                     <div class="text-center">
-                      <argon-button class="mt-4" variant="gradient" color="success" fullWidth size="lg"
-                        @click="(event) => signIn(event)">Sign in</argon-button>
+                      <parking-button class="mt-4" variant="gradient" color="success" fullWidth size="lg"
+                        @click="(event) => signIn(event)">Sign in</parking-button>
                     </div>
                   </form>
                 </div>
@@ -53,9 +66,9 @@
 </template>
 
 <script>
-import ArgonInput from "@/components/ArgonInput.vue";
+import ParkingInput from "@/components/ParkingInput.vue";
 import ArgonSwitch from "@/components/ArgonSwitch.vue";
-import ArgonButton from "@/components/ArgonButton.vue";
+import ParkingButton from "@/components/ParkingButton.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 import StorageService from '@/storage/StorageService';
 const SignInRepository = RepositoryFactory.get('user')
@@ -64,9 +77,9 @@ const body = document.getElementsByTagName("body")[0];
 export default {
   name: "signin",
   components: {
-    ArgonInput,
+    ParkingInput,
     ArgonSwitch,
-    ArgonButton,
+    ParkingButton,
   },
   created() {
     this.$store.state.hideConfigButton = true;
