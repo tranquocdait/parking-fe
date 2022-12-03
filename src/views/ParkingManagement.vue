@@ -18,10 +18,10 @@
                 style="border-right: 1px solid #e9ecef !important;"
               />
               <span class="space-span"></span>
-              <select class="form-select" aria-label="Default select example">
-                <option selected>---Status---</option>
-                <option value="check-in">Check in</option>
-                <option value="check-out">Check out</option>
+              <select class="form-select" aria-label="Default select example" v-model="type">
+                <option value="0" selected>---Status---</option>
+                <option value="1">Check in</option>
+                <option value="2">Check out</option>
               </select>
               <parking-button color="success" size="sm" class="ms-auto"  @click="search()">Search</parking-button>
             </div>
@@ -101,6 +101,7 @@ export default {
   data() {
     return {
       keyword: '',
+      type: 0,
       data_list: null,
     };
   },
@@ -118,7 +119,8 @@ export default {
       const { data } = await ParkingRepository.post({
         'page': 0,
         'page_size': 100,
-        'keyword': this.keyword
+        'keyword': this.keyword,
+        'type': this.type,
       }, 'tracking-management');
       if (data.status == 200) {
         this.data_list = data.data.data_list
