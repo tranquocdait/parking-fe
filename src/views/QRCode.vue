@@ -5,8 +5,7 @@
   }">
     <main class="mt-1 main-content border-radius-lg">
       <div class="section min-vh-85 position-relative transform-scale-0 transform-scale-md-7 text-center">
-        <img :style="{width: '800px'}"
-          :src="`data:image/png;base64, ${qrCode}` " />
+        <img :style="{ width: '800px' }" :src="`data:image/png;base64, ${qrCode}`" />
       </div>
     </main>
   </div>
@@ -16,6 +15,7 @@
 <script>
 import AppFooter from "@/examples/Footer.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
+import { database, ref, onValue } from '@/firebase/firebase';
 // import SockJS from "sockjs-client";
 // import Stomp from "webstomp-client";
 const QRCodeRepository = RepositoryFactory.get('qr_code')
@@ -30,6 +30,8 @@ export default {
   data() {
     return {
       qrCode: '',
+      userId: '',
+      messages: [],
     }
   },
 
@@ -40,10 +42,39 @@ export default {
   methods: {
 
     async getData() {
-      const { data } = await QRCodeRepository.get('generate');
+      const { data } = await QRCodeRepository.get('generate?isViewAll=true');
       if (data.status == 200) {
-        this.qrCode = data.data
+        this.qrCode = data.data.qr_code;
+        this.userId = data.data.user_id;
+        this.getMessage();
       }
+    },
+
+    getMessage() {
+      onValue(ref(database, `checking-${this.userId}`),
+        datas => {
+          this.messages = []
+          datas.forEach(data => {
+              this.messages.push(data.val())
+          });
+          if (this.messages.length > 0) {
+            const message = this.messages[this.messages.length - 1];
+            if (message.type == 'CHECK_IN') {
+                    this.$toast.show(message.data, {
+                        type: 'success',
+                        position: 'bottom',
+                        dismissible: true
+                    });
+                } else if (message.type == 'CHECK_OUT') {
+                    this.$toast.show(message.data, {
+                        type: 'error',
+                        position: 'bottom',
+                        dismissible: true
+                    });
+                }
+          }
+        }
+      )
     }
   },
 
@@ -71,7 +102,7 @@ export default {
     }
     this.$store.state.isTransparent = "bg-transparent";
   },
-  
+
   computed: {
     isTransparent() {
       return this.$store.state.isTransparent;

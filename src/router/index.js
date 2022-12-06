@@ -9,8 +9,14 @@ import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import Signin from "../views/Signin.vue";
 import QRCode from "../views/QRCode.vue";
+import Demo from "../views/Demo.vue";
 
 const routes = [
+  {
+    path: "/demo",
+    name: "Demo",
+    component: Demo,
+  },
   {
     path: "/",
     name: "/",

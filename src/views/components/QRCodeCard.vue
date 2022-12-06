@@ -33,9 +33,9 @@ export default {
 
   methods: {
     async getData() {
-      const { data } = await QRCodeRepository.get('generate');
+      const { data } = await QRCodeRepository.get('generate?isViewAll=false');
       if (data.status == 200) {
-        this.qrCode = data.data
+        this.qrCode = data.data.qr_code
       }
     },
 
