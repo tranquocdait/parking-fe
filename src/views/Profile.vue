@@ -17,7 +17,7 @@
               </div>
             </div>
             <div class="col-auto my-auto">
-              <div class="h-100">
+              <div class="h-100" v-if="data">
                 <h5 class="mb-1">{{data.first_name}} {{data.last_name}}</h5>
                 <p class="mb-0 font-weight-bold text-sm">{{data.user_name}}</p>
               </div>
