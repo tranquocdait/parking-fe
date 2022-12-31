@@ -23,7 +23,7 @@ const routes = [
     redirect: localStorage.getItem("token") ? "/manage" : "/signin",
   },
   {
-    path: "/dashboard-default",
+    path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
   },

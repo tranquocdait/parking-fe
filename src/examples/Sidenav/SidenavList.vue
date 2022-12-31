@@ -4,17 +4,18 @@
     id="sidenav-collapse-main"
   >
     <ul class="navbar-nav">
-      <!-- <li class="nav-item">
+      <li class="nav-item">
         <sidenav-item
-          url="/dashboard-default"
-          :class="getRoute() === 'dashboard-default' ? 'active' : ''"
-          :navText="this.$store.state.isRTL ? 'لوحة القيادة' : 'Dashboard'"
+          url="/dashboard"
+          :class="getRoute() === 'dashboard' ? 'active' : ''"
+          :navText="'Dashboard'"
         >
           <template v-slot:icon>
-            <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
+            <i class="ni ni-chart-bar-32 text-primary text-sm opacity-10"></i>
+            <!-- <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i> -->
           </template>
         </sidenav-item>
-      </li> -->
+      </li>
       <li class="nav-item">
         <sidenav-item
           url="/manage"

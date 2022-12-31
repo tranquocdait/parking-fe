@@ -53,9 +53,8 @@
                 style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg');
           background-size: cover;">
                 <span class="mask bg-gradient-success opacity-6"></span>
-                <h4 class="mt-5 text-white font-weight-bolder position-relative">"Attention is the new currency"</h4>
-                <p class="text-white position-relative">The more effortless the writing looks, the more effort the
-                  writer actually put into the process.</p>
+                <h4 class="mt-5 text-white font-weight-bolder position-relative">Danang university</h4>
+                <p class="text-white position-relative">Vietnam - Korea university of information and communication technology</p>
               </div>
             </div>
           </div>
