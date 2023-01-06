@@ -31,7 +31,7 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Vehicel</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Vehicle</th>
                     <th>
                       <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 mb-0">Branch</p>
                       <p class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 mb-0">Model</p>
@@ -139,7 +139,7 @@ export default {
 </script>
 <style lang='scss' scoped>
 .first-col {
-  padding-left: 12px;
+  padding-left: 24px;
 }
 
 .card-header {

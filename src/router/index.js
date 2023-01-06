@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import Tables from "../views/Tables.vue";
 import ParkingManagement from "../views/ParkingManagement.vue";
+import VehicleManagement from "../views/VehicleManagement.vue";
 import Billing from "../views/Billing.vue";
 import VirtualReality from "../views/VirtualReality.vue";
 import RTL from "../views/Rtl.vue";
@@ -36,6 +37,11 @@ const routes = [
     path: "/manage",
     name: "Management",
     component: ParkingManagement,
+  },
+  {
+    path: "/vehicles",
+    name: "Vehicles",
+    component: VehicleManagement,
   },
   {
     path: "/billing",
