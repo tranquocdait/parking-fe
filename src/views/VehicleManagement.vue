@@ -1,45 +1,33 @@
 <template>
   <Popup v-if="openModal">
-    <div class="input-group modal-heade">
+    <div class="input-group modal-heade"  @click.self="onParentClick">
       <span class="input-group-text text-body">
         <i class="fas fa-search" aria-hidden="true"></i>
       </span>
       <input type="text" class="form-control text-border" v-model="keyword" placeholder="Type here..."
-        v-on:keyup.enter="search()" style="border-right: 1px solid #e9ecef !important;" />
-      <parking-button color="success" size="sm" class="ms-auto" @click="search()">Search</parking-button>
+        v-on:keyup.enter="searchVehicle()" style="border-right: 1px solid #e9ecef !important;" />
+      <parking-button color="success" size="sm" class="ms-auto" @click="searchVehicle()">Search</parking-button>
     </div>
     <p class="modal-result">Result of search:</p>
     <div class="modal-body">
-      <div class="modal-item d-flex">
-        abc
-        <a @click="search()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
-      </div>
-      <div class="modal-item d-flex border-butto">
-        abc
-        <a @click="search()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
-      </div>
-      <div class="modal-item d-flex">
-        abc
-        <a @click="search()"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
-      </div>
+      <template v-for="(item, index) in vehicles" :key="index">
+        <div class="modal-item d-flex">
+          {{ item.username_owner }} - {{ item.plate_number }}
+          <a @click="addVehicles(item)"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+        </div>
+      </template>
     </div>
     <p class="modal-result">Accepted vehicle:</p>
     <div class="modal-body">
-      <div class="modal-item d-flex">
-        abc
-        <a @click="search()"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
-      </div>
-      <div class="modal-item d-flex border-butto">
-        abc
-        <a @click="search()"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
-      </div>
-      <div class="modal-item d-flex">
-        abc
-        <a @click="search()"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
-      </div>
+      <template v-for="(item, index) in registeredVehicles" :key="index">
+        <div class="modal-item d-flex">
+          {{ item.username_owner }} - {{ item.plate_number }}
+          <a @click="removeVehicles(item)"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>
+        </div>
+      </template>
     </div>
     <div class="modal-footer d-flex">
-      <parking-button color="danger" size="sm" @click="openModal = !openModal">Accept</parking-button>
+      <parking-button color="danger" size="sm" :disabled="this.registeredVehicles.length == 0" @click="register()">Accept</parking-button>
       <parking-button color="primary" size="sm" @click="openModal = !openModal">Close</parking-button>
     </div>
   </Popup>
@@ -66,8 +54,7 @@
             </div>
           </div>
           <div class="card-header d-flex pb-0">
-            <parking-button color="primary" size="sm" class="ms-auto" @click="openModal = !openModal">Vehicle
-              register</parking-button>
+            <parking-button color="primary" size="sm" class="ms-auto" @click="openRigisterModal()">Vehicle register</parking-button>
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
@@ -118,7 +105,43 @@
                       </td>
                       <td class="align-middle">
                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
-                          data-original-title="Edit user">More</a>
+                          data-original-title="Edit user" @click="getMoreInfor(item)">More</a>
+                        <ul
+                          class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4"
+                          :class="item.more ? 'show' : ''"
+                          aria-labelledby="dropdownMenuButton"
+                        >
+                          <li class="nav-item d-flex align-items-center">
+                            <a class="dropdown-item border-radius-md" href="./profile">
+                              <div class="py-1 d-flex">
+                                <div class="my-auto text-success">
+                                  <i class="fa fa-check-circle-o fa-lg pe-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-1 text-sm font-weight-normal">
+                                    Accept
+                                  </h6>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                          <li class="border-bottom-nav">
+                          </li>
+                          <li class="nav-item d-flex align-items-centerr">
+                            <a class="dropdown-item border-radius-md" href="./signin">
+                              <div class="py-1 d-flex">
+                                <div class="my-auto  text-danger">
+                                  <i class="fa fa-ban fa-lg pe-2"></i>
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                  <h6 class="mb-1 text-sm font-weight-normal">
+                                    Reject
+                                  </h6>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                        </ul>
                       </td>
                     </tr>
                   </template>
@@ -153,16 +176,37 @@ export default {
       keyword: '',
       type: 0,
       data_list: null,
+      vehicles: [],
+      registeredVehicles: [],
     };
   },
 
   created() {
     this.getData()
+
+    window.addEventListener('click', (e) => {
+        if (!this.$el.contains(e.target)){
+          console
+        }
+      })
   },
 
   methods: {
     search() {
       this.getData();
+    },
+
+    async searchVehicle() {
+      const { data } = await ParkingRepository.post({
+        'page': 0,
+        'page_size': 20,
+        'keyword': this.keyword,
+        'type': this.type,
+        "excluded_vehicle_ids": this.getExcludedVehicleIds()
+      }, 'vehicles');
+      if (data.status == 200) {
+        this.vehicles = data.data.data_list
+      }
     },
 
     async getData() {
@@ -174,7 +218,43 @@ export default {
       }, 'vehicle-management');
       if (data.status == 200) {
         this.data_list = data.data.data_list
+        for (let data in this.data_list) {
+          data = {...data, ...{more:false}};
+        }
       }
+    },
+
+    async register() {
+      const { data } = await ParkingRepository.post({
+        'status': 2,
+        "vehicle_ids": this.getExcludedVehicleIds()
+      }, 'parking-registration');
+      if (data.status == 200) {
+        this.openModal = !this.openModal
+        this.getData()
+      }
+    },
+
+    openRigisterModal() {
+      this.keyword = ''
+      this.vehicles = []
+      this.registeredVehicles = []
+      this.searchVehicle()
+      this.openModal = !this.openModal
+    },
+
+    getExcludedVehicleIds() {
+      return this.registeredVehicles.map((item) => item.vehicle_id)
+    },
+
+    addVehicles(vehicle) {
+      this.registeredVehicles.push(vehicle)
+      this.vehicles = this.vehicles.filter(item => item.vehicle_id !== vehicle.vehicle_id)
+    },
+
+    removeVehicles(vehicle) {
+      this.vehicles.push(vehicle)
+      this.registeredVehicles = this.registeredVehicles.filter(item => item.vehicle_id !== vehicle.vehicle_id)
     },
 
     pipeString(str) {
@@ -183,7 +263,15 @@ export default {
 
     isCheckout(checkOutDate) {
       return checkOutDate && checkOutDate.trim() !== ''
-    }
+    },
+
+    getMoreInfor(item) {
+      const more = item.more
+      for (let data of this.data_list) {
+        data.more = false
+      }
+      item.more = !more
+    },
   }
 };
 </script>
@@ -244,4 +332,5 @@ export default {
   padding-top: 12px;
   margin-bottom: 12px;
 }
+
 </style>
