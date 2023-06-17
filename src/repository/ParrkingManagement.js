@@ -7,5 +7,11 @@ export default {
         return await Repository.post(`${resource}/${subUrl}`, params, { headers: {
             "Authorization": localStorage.getItem('token')
         }});
+    },
+
+    async get(subUrl) {
+        return await Repository.get(`${resource}/${subUrl}`, { headers: {
+            "Authorization": localStorage.getItem('token')
+        }});
     }
 }

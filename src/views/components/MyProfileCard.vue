@@ -36,6 +36,12 @@
       <p class="text-uppercase text-sm">Parking Area Information</p>
       <div class="row">
         <div class="col-md-4 mb-3">
+          <label for="example-text-input" class="form-control-label">Capacity</label>
+          <input class="form-control" type="text" :value="data.parking_area.capacity" disabled />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-3">
           <label for="example-text-input" class="form-control-label">City/ Province</label>
           <input class="form-control" type="text" :value="data.parking_area.province" disabled />
         </div>
