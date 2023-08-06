@@ -4,7 +4,7 @@
     <input
       :type="type"
       class="form-control"
-      :class="getClasses(size, valid)"
+      :class="getClasses(size, isValid)"
       :name="name"
       :id="id"
       :value="modelValue"
@@ -12,8 +12,9 @@
       :isRequired="isRequired"
       @input="updateValue"
       @blur="$emit('blur', $event)"
+      @change="changeInput()"
     />
-    <small id="emailHelp" class="form-small text-danger" v-if="valid === false">{{getMessage(message, placeholder)}}</small>
+    <small id="emailHelp" class="form-small text-danger" v-if="isValid === false">{{getMessage(message, placeholder)}}</small>
   </div>
 </template>
 
@@ -48,6 +49,19 @@ export default {
     type: String,
     isRequired: Boolean,
   },
+  data() {
+    return {
+      isValid: null,
+    }
+  },
+  watch: {
+    valid: function () {
+      this.isValid = this.valid;
+    }
+  },
+  mounted() {
+    this.isValid = this.valid;
+  },
   methods: {
     getClasses: (size, valid) => {
       let sizeValue, isValidValue = '';
@@ -60,6 +74,10 @@ export default {
         isValidValue = 'is-invalid';
       }
       return `${sizeValue} ${isValidValue}`;
+    },
+
+    changeInput() {
+      this.isValid = null;
     },
 
     getMessage: (message, placeholder) => {

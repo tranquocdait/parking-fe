@@ -25,6 +25,7 @@
                         v-model="username"
                         name="username"
                         size="lg"
+                        :message="userNameMessage"
                         :valid="isValidUsername" 
                         label="User name" />
                     </div>
@@ -126,6 +127,8 @@
                           name="registerDate" 
                           label="Register date"
                           @change="changeRegisterDate()"
+                          :message="registerDateMessage"
+                          :valid="isValidRegisterDate" 
                           col="6"
                           size="lg" />
                       </div>
@@ -163,6 +166,14 @@
                           name="address" 
                           label="Address"
                           col="12"
+                          size="lg" />
+                        <parking-input 
+                          type="number" 
+                          placeholder="100" 
+                          v-model="capacity"
+                          name="capacity" 
+                          label="capacity"
+                          col="6"
                           size="lg" />
                       </div>
                     </template>
@@ -251,6 +262,9 @@ export default {
     this.$store.state.showFooter = true;
     body.classList.add("bg-gray-100");
   },
+  mounted() {
+    this.changeRegisterDate();
+  },
   data() {
     return {
       modalVisible: false,
@@ -276,6 +290,7 @@ export default {
       district: '',
       commune: '',
       address: '',
+      capacity: '',
 
       userTypeDatas: [
         {
@@ -295,6 +310,10 @@ export default {
       // validate
       isValidUsername: null,
       isRetypePassword: null,
+      isValidRegisterDate: null,
+
+      userNameMessage: '',
+      registerDateMessage: '',
     }
   },
   methods: {
@@ -303,7 +322,12 @@ export default {
     },
   
     changeRegisterDate() {
-      const dArr = this.registerDatePicker.split("-");  // ex input: "2010-01-18"
+      let dArr
+      if (this.registerDatePicker) {
+        dArr = this.registerDatePicker.split("-");  // ex input: "2010-01-18"
+      } else {
+        dArr = moment().format("YYYY-MM-DD").split("-");  // ex input: "2010-01-18"
+      }
       this.registerDate = dArr[2]+ "/" +dArr[1]+ "/" +dArr[0];
     },
 
@@ -334,13 +358,32 @@ export default {
         "commune": this.commune,
         "district": this.district,
         "address": this.address,
-
-      }, 'sign-up');
+        "capacity": this.capacity,
+      }, 'sign-up')
+      .catch(error => {
+        return error.response;
+      });
       if (data.status == 200) {
         this.TogglePopup('timedTrigger');
         setTimeout(() => {
           window.location.href = '/signin';
         }, 4000);
+      } else if(data.status == 400) {
+        const message = data.data.message
+        const registerDate = data.data.register_date
+        const userName = data.data.userName
+        if (message && message.toLowerCase().includes('username')) {
+          this.isValidUsername = false;
+          this.userNameMessage = message;
+        }
+        if (registerDate) {
+          this.isValidRegisterDate = false;
+          this.registerDateMessage = registerDate;
+        }
+        if (userName) {
+          this.isValidUsername = false;
+          this.userNameMessage = userName;
+        }
       }
     },
 
