@@ -58,7 +58,41 @@
         >
           <template v-slot:icon>
             <i
-              class="ni ni-credit-card text-success text-sm opacity-10"
+              class="fa fa-qrcode text-dark text-sm opacity-10"
+            ></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li class="mt-3 nav-item">
+        <h6
+          class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
+          :class="this.$store.state.isRTL ? 'me-4' : 'ms-2'"
+        >
+          Ticket management
+        </h6>
+      </li>
+      <li class="nav-item">
+        <sidenav-item
+          url="/payments"
+          :class="getRoute() === 'payments' ? 'active' : ''"
+          :navText="'Payments'"
+        >
+          <template v-slot:icon>
+            <i
+              class="fa fa-ticket text-info text-sm opacity-10"
+            ></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li class="nav-item">
+        <sidenav-item
+          url="/tickets"
+          :class="getRoute() === 'tickets' ? 'active' : ''"
+          :navText="'Tickets'"
+        >
+          <template v-slot:icon>
+            <i
+              class="fa fa-credit-card-alt text-success text-sm opacity-10"
             ></i>
           </template>
         </sidenav-item>

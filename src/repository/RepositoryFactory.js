@@ -1,10 +1,15 @@
 import UserRepository from './UserRepository'
 import QRCodeRepository from './QRCodeRepository'
-import ParrkingManagement from './ParrkingManagement'
+import ParkingManagement from './ParkingManagement'
+import TicketManagement from './TicketManagement'
+import PaymentManagement from './PaymentManagement'
+
 const repositories = {
     user: UserRepository,
     qr_code: QRCodeRepository,
-    parking: ParrkingManagement
+    parking: ParkingManagement,
+    ticket: TicketManagement,
+    payment: PaymentManagement,
 };
 
 export default {

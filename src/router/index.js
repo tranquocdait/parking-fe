@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import Tables from "../views/Tables.vue";
 import ParkingManagement from "../views/ParkingManagement.vue";
+import TicketManagement from "../views/TicketManagement.vue";
+import PaymentManagement from "../views/PaymentManagement.vue";
 import VehicleManagement from "../views/VehicleManagement.vue";
 import Billing from "../views/Billing.vue";
 import VirtualReality from "../views/VirtualReality.vue";
@@ -37,6 +39,16 @@ const routes = [
     path: "/manage",
     name: "Management",
     component: ParkingManagement,
+  },
+  {
+    path: "/tickets",
+    name: "Tickets",
+    component: TicketManagement,
+  },
+  {
+    path: "/payments",
+    name: "Payments",
+    component: PaymentManagement,
   },
   {
     path: "/vehicles",
