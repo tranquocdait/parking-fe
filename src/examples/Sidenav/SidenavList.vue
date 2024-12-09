@@ -79,7 +79,7 @@
         >
           <template v-slot:icon>
             <i
-              class="fa fa-ticket text-info text-sm opacity-10"
+              class="fa fa-shopping-cart text-info text-sm opacity-10"
             ></i>
           </template>
         </sidenav-item>
@@ -92,7 +92,7 @@
         >
           <template v-slot:icon>
             <i
-              class="fa fa-credit-card-alt text-success text-sm opacity-10"
+              class="fa fa-credit-card text-success text-sm opacity-10"
             ></i>
           </template>
         </sidenav-item>
