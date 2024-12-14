@@ -10,6 +10,7 @@
       :value="modelValue"
       :placeholder="placeholder"
       :isRequired="isRequired"
+      :disabled="disabled"
       @input="updateValue"
       @blur="$emit('blur', $event)"
       @change="changeInput()"
@@ -48,6 +49,7 @@ export default {
     placeholder: String,
     type: String,
     isRequired: Boolean,
+    disabled: Boolean,
   },
   data() {
     return {

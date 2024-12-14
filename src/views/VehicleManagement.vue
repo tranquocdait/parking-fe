@@ -164,7 +164,7 @@ import ParkingButton from "@/components/ParkingButton.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 const ParkingRepository = RepositoryFactory.get('parking')
 export default {
-  name: "tables",
+  name: "vehicle-management",
   components: {
     ParkingButton,
     Popup

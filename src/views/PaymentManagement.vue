@@ -2,49 +2,49 @@
   <Popup v-if="openModal">
     <div class="row"  @click.self="onParentClick">
       <div class="col-12">
-        <label for="User">User</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Choose...</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+        <label for="vehicel">Vehicel</label>
+        <select v-model="selectedVehicle" class="form-select" aria-label="Default select example">
+          <option value="0">Choose...</option>
+          <option v-for="vehicle in vehicles" :key="vehicle.vehicle_id" :value="vehicle.vehicle_id">
+            {{ vehicle.plate_number }} ({{ vehicle.username_owner }})
+          </option>
         </select>
       </div>
       <div class="col-12">
-        <label for="Ticket">Ticket</label>
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Choose...</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+        <label for="ticket">Ticket</label>
+        <select v-model="selectedTicket" class="form-select" aria-label="Default select example" @change="changeTickets(selectedTicket)">
+          <option value="0">Choose...</option>
+          <option v-for="ticket in tickets" :key="ticket.id" :value="ticket.id">
+            {{ ticket.name }}
+          </option>
         </select>
       </div>
       <parking-input 
         type="date" 
         placeholder="dd-mm-yyyy" 
         v-model="registerDatePicker"
-        name="registerDate" 
         label="Start date"
         @change="changeRegisterDate()"
         :message="registerDateMessage"
         :valid="isValidRegisterDate" 
         col="12"
         size="lg" />
-        <parking-input 
-        type="date" 
-        placeholder="dd-mm-yyyy" 
-        v-model="registerDatePicker"
-        name="registerDate" 
-        label="End date"
+      <parking-input 
+        type="text" 
+        placeholder="0" 
+        v-model="fare"
+        name="fare" 
+        label="Start date"
         @change="changeRegisterDate()"
         :message="registerDateMessage"
         :valid="isValidRegisterDate" 
         col="12"
-        size="lg" />
+        size="lg" 
+        disabled/>
     </div>
     
     <div class="modal-footer d-flex">
-      <parking-button color="danger" size="sm" :disabled="this.registeredVehicles.length == 0" @click="register()">Accept</parking-button>
+      <parking-button color="danger" size="sm" :disabled="selectedVehicle == 0" @click="register()">Accept</parking-button>
       <parking-button color="primary" size="sm" @click="openModal = !openModal">Cancel</parking-button>
     </div>
   </Popup>
@@ -71,7 +71,7 @@
             </div>
           </div>
           <div class="card-header d-flex pb-0">
-            <parking-button color="primary" size="sm" class="ms-auto" @click="openRigisterModal()">Vehicle register</parking-button>
+            <parking-button color="primary" size="sm" class="ms-auto" @click="openRigisterModal()">Payment register</parking-button>
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
@@ -84,6 +84,7 @@
                     </th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ticket Name</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ticket Fare</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Prices</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Start Date</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">End Ticket</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
@@ -102,6 +103,9 @@
                       </td>
                       <td class="align-middle text-center text-sm">
                         <p class="text-xs font-weight-bold mb-0">{{item.fare}}</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <p class="text-xs font-weight-bold mb-0">{{item.prices}}</p>
                       </td>
                       <td class="align-middle text-center text-sm">
                         <p class="text-xs font-weight-bold mb-0">{{item.start_date}}</p>
@@ -174,9 +178,12 @@ import ParkingButton from "@/components/ParkingButton.vue";
 import ParkingInput from "@/components/ParkingInput.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 const PaymentManagement = RepositoryFactory.get('payment')
+const TicketManagement = RepositoryFactory.get('ticket')
+const ParkingRepository = RepositoryFactory.get('parking')
+import moment from 'moment';
 
 export default {
-  name: "tables",
+  name: "payment-management",
   components: {
     ParkingButton,
     ParkingInput,
@@ -189,20 +196,20 @@ export default {
       keyword: '',
       type: 0,
       data_list: null,
+
+      // Register Form
+      selectedTicket: 0,
+      tickets: [],
+      selectedVehicle: 0,
       vehicles: [],
-      registeredVehicles: [],
-      registerDate: "2021-10-29"
+      registerDatePicker: moment().format("YYYY-MM-DD"),
+      isValidRegisterDate: null,
+      fare: 0,
     };
   },
 
   created() {
     this.getData()
-
-    window.addEventListener('click', (e) => {
-        if (!this.$el.contains(e.target)){
-          console
-        }
-      })
   },
 
   methods: {
@@ -210,14 +217,53 @@ export default {
       this.getData();
     },
 
-    async searchVehicle() {
-      const { data } = await PaymentManagement.post({
+    mounted() {
+      this.changeRegisterDate();
+    },
+
+    changeTickets(ticketId) {
+      if (ticketId !== "0") {
+        const selectedTicket = this.tickets.find(ticket => ticket.id === ticketId);
+        console.log("Selected Ticket:", selectedTicket);
+        this.fare = selectedTicket.fare;
+      } else {
+        this.fare = 0;
+        console.log("No ticket selected.");
+      }
+    },
+
+    changeRegisterDate() {
+      let dArr
+      if (this.registerDatePicker) {
+        dArr = this.registerDatePicker.split("-");  // ex input: "2010-01-18"
+      } else {
+        dArr = moment().format("YYYY-MM-DD").split("-");  // ex input: "2010-01-18"
+      }
+      this.registerDate = dArr[2]+ "/" +dArr[1]+ "/" +dArr[0];
+    },
+
+    async getTicketData() {
+      const { data } = await TicketManagement.post({
         'page': 0,
-        'page_size': 20,
+        'page_size': 100,
         'keyword': this.keyword,
         'type': this.type,
-        "excluded_vehicle_ids": this.getExcludedVehicleIds()
-      }, 'vehicles');
+      }, 'list');
+      if (data.status == 200) {
+        this.tickets = [];
+        for (const ticket of data.data.data_list) {
+          if (ticket.type != 4) {
+            this.tickets.push(ticket);
+          }
+        }
+      }
+    },
+
+    async getVehicelData() {
+      const { data } = await ParkingRepository.post({
+        'page': 0,
+        'page_size': 100,
+      }, 'vehicle-management');
       if (data.status == 200) {
         this.vehicles = data.data.data_list
       }
@@ -240,9 +286,10 @@ export default {
 
     async register() {
       const { data } = await PaymentManagement.post({
-        'status': 2,
-        "vehicle_ids": this.getExcludedVehicleIds()
-      }, 'parking-registration');
+        'vehicle_id': this.selectedVehicle,
+        'ticket_id': this.selectedTicket,
+        'start_date': this.registerDatePicker,
+      }, '');
       if (data.status == 200) {
         this.openModal = !this.openModal
         this.getData()
@@ -250,29 +297,14 @@ export default {
     },
 
     openRigisterModal() {
-      this.keyword = ''
-      this.vehicles = []
-      this.registeredVehicles = []
-      this.searchVehicle()
-      this.openModal = !this.openModal
-    },
-
-    getExcludedVehicleIds() {
-      return this.registeredVehicles.map((item) => item.vehicle_id)
-    },
-
-    addVehicles(vehicle) {
-      this.registeredVehicles.push(vehicle)
-      this.vehicles = this.vehicles.filter(item => item.vehicle_id !== vehicle.vehicle_id)
-    },
-
-    removeVehicles(vehicle) {
-      this.vehicles.push(vehicle)
-      this.registeredVehicles = this.registeredVehicles.filter(item => item.vehicle_id !== vehicle.vehicle_id)
-    },
-
-    pipeString(str) {
-      return str && str.trim() !== '' ? str : ' - '
+      this.tickets = [];
+      this.vehicles = [];
+      this.fare = 0;
+      this.selectedTicket = '';
+      this.selectedVehicle = '';
+      this.getTicketData();
+      this.getVehicelData();
+      this.openModal = !this.openModal;
     },
 
     isCheckout(checkOutDate) {
