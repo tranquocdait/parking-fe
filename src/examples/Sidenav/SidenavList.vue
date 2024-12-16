@@ -47,14 +47,14 @@
           class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
           :class="this.$store.state.isRTL ? 'me-4' : 'ms-2'"
         >
-          QR code
+          Check In
         </h6>
       </li>
       <li class="nav-item">
         <sidenav-item
           url="/qr-code"
           :class="getRoute() === 'qr-code' ? 'active' : ''"
-          :navText="'QR code'"
+          :navText="'Check In'"
         >
           <template v-slot:icon>
             <i
@@ -79,7 +79,7 @@
         >
           <template v-slot:icon>
             <i
-              class="fa fa-ticket text-info text-sm opacity-10"
+              class="fa fa-shopping-cart text-info text-sm opacity-10"
             ></i>
           </template>
         </sidenav-item>
@@ -92,7 +92,7 @@
         >
           <template v-slot:icon>
             <i
-              class="fa fa-credit-card-alt text-success text-sm opacity-10"
+              class="fa fa-credit-card text-success text-sm opacity-10"
             ></i>
           </template>
         </sidenav-item>

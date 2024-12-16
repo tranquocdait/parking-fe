@@ -5,7 +5,7 @@
     </div>
     <div class="p-3 card-body">
       <div class="chart">
-        <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+        <canvas :id="id" class="chart-canvas" height="300"></canvas>
       </div>
     </div>
   </div>
@@ -22,6 +22,12 @@ export default {
       type: Array,
       default() {
         return []
+      },
+    },
+    id: {
+      type: String,
+      default() {
+        return 'chart-line'
       },
     },
     label: {
@@ -45,7 +51,7 @@ export default {
   },
   methods: {
     mappingChart() {
-      var ctx1 = document.getElementById("chart-line").getContext("2d");
+      var ctx1 = document.getElementById(this.id).getContext("2d");
 
       var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
 

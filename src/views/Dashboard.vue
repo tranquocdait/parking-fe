@@ -2,35 +2,28 @@
   <div class="py-4 container-fluid">
     <div class="row">
       <div class="col-lg-12">
-        <div class="row">
-          <div class="col-lg-4 col-md-6 col-12">
-            <card v-if="stats" :title="stats.money.title" :value="stats.money.value" :percentage="stats.money.percentage"
-              :iconClass="stats.money.iconClass" :iconBackground="stats.money.iconBackground"
-              :detail="stats.money.detail" directionReverse></card>
-          </div>
-          <!-- <div class="col-lg-4 col-md-6 col-12">
-            <card
-              :title="stats.users.title"
-              :value="stats.users.value"
-              :percentage="stats.users.percentage"
-              :iconClass="stats.users.iconClass"
-              :iconBackground="stats.users.iconBackground"
-              :detail="stats.users.detail"
-              directionReverse
-            ></card>
-          </div>
+        <div class="row" v-if="stats">
           <div class="col-lg-4 col-md-6 col-12">
             <card
-              :title="stats.clients.title"
-              :value="stats.clients.value"
-              :percentage="stats.clients.percentage"
-              :iconClass="stats.clients.iconClass"
-              :iconBackground="stats.clients.iconBackground"
-              :percentageColor="stats.clients.percentageColor"
-              :detail="stats.clients.detail"
+              :title="stats.totalParkingMonthly.title"
+              :value="stats.totalParkingMonthly.value" 
+              :percentage="stats.totalParkingMonthly.percentage"
+              :iconClass="stats.totalParkingMonthly.iconClass" 
+              :iconBackground="stats.totalParkingMonthly.iconBackground"
+              :detail="stats.totalParkingMonthly.detail" directionReverse
+            />
+          </div>
+          <div class="col-lg-3 col-md-6 col-12">
+            <card
+              :title="stats.income.title"
+              :value="stats.income.value"
+              :percentage="stats.income.percentage"
+              :iconClass="stats.income.iconClass"
+              :iconBackground="stats.income.iconBackground"
+              :detail="stats.income.detail"
               directionReverse
-            ></card>
-          </div> -->
+            />
+          </div>
 
         </div>
         <div class="row">
@@ -38,10 +31,24 @@
             <!-- line chart -->
             <div class="card z-index-2">
               <gradient-line-chart 
+              :id="'parking-overview'"
               :chartLabels="labels" 
               :datas="datas" 
               :label="'Parking'" 
               :title="'Parking Overview'"/>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-lg-12 mb-lg">
+            <!-- line chart -->
+            <div class="card z-index-2">
+              <gradient-line-chart 
+              :id="'imcome'"
+              :chartLabels="incomeLabels" 
+              :datas="incomeDatas" 
+              :label="'Income'" 
+              :title="'Income Overview'"/>
             </div>
           </div>
         </div>
@@ -62,6 +69,9 @@ export default {
       labels: [],
       datas: [],
       total: 0,
+      incomeLabels: [],
+      incomeDatas: [],
+      incomeTotal: 0,
       stats: null,
     };
   },
@@ -71,7 +81,9 @@ export default {
   },
 
   created() {
-    this.getData()
+    this.getData();
+    this.getIncomeData();
+    this.setCard()
   },
 
   methods: {
@@ -83,13 +95,24 @@ export default {
         this.labels = data.data.label;
         this.datas = data.data.data;
         this.total = data.data.total;
+      }
+    },
+
+    async getIncomeData() {
+      const { data } = await ParkingRepository.post({
+        'type': 1,
+      }, 'income-statistics');
+      if (data.status == 200) {
+        this.incomeLabels = data.data.label;
+        this.incomeDatas = data.data.data;
+        this.incomeTotal = data.data.total;
         this.setCard()
       }
     },
 
     setCard() {
       this.stats = {
-        money: {
+        totalParkingMonthly: {
           title: "Total parking",
           value: this.total,
           percentage: "+55%",
@@ -97,22 +120,22 @@ export default {
           detail: "since last month",
           iconBackground: "bg-gradient-primary",
         },
-        users: {
+        totalParkingDaily: {
           title: "Today's Vehicle",
           value: "2,300",
           percentage: "+3%",
           iconClass: "ni ni-align-left-2",
           iconBackground: "bg-gradient-danger",
-          detail: "since last week",
+          detail: "since last month",
         },
-        clients: {
+        income: {
           title: "Total Income",
-          value: "$53,000",
+          value: this.incomeTotal + "₫",
           percentage: "-2%",
           iconClass: "ni ni-money-coins",
           percentageColor: "text-danger",
           iconBackground: "bg-gradient-success",
-          detail: "since last quarter",
+          detail: "since last month",
         },
       }
     }
