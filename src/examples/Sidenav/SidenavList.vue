@@ -47,14 +47,14 @@
           class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
           :class="this.$store.state.isRTL ? 'me-4' : 'ms-2'"
         >
-          QR code
+          Check In
         </h6>
       </li>
       <li class="nav-item">
         <sidenav-item
           url="/qr-code"
           :class="getRoute() === 'qr-code' ? 'active' : ''"
-          :navText="'QR code'"
+          :navText="'Check In'"
         >
           <template v-slot:icon>
             <i

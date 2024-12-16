@@ -9,7 +9,22 @@
           <div class="d-flex justify-content-center infor-lable">
             <h1>There are <span class="text-danger">{{ occupation }}/{{ capacity }}</span> cars parked</h1>
           </div>
-          <img :style="{ width: '600px' }" :src="`data:image/png;base64, ${qrCode}`" />
+          <img v-if="isQRCode" :style="{ width: '600px' }" :src="`data:image/png;base64, ${qrCode}`" />
+          <video
+            v-else
+            ref="video"
+            autoplay
+            playsinline
+            style="width: 100%; max-width: 720px; border: 1px solid #ccc;"
+          ></video>
+          <div style="margin-top: 10px;">
+            <template v-if="!isQRCode">
+              <parking-button v-if="!isStreamRunning" color="primary" size="lg" class="ms-auto" @click="startCamera">Start</parking-button>
+              <parking-button v-if="isStreamRunning" color="danger" size="lg" class="ms-auto" @click="stopCamera">Stop</parking-button>
+            </template>
+            <parking-button v-if="!isQRCode && !isStreamRunning" color="warning" size="lg" style="margin-left: 12px !important;" class="ms-auto" @click="isQRCode=true">Use QR Code</parking-button>
+            <parking-button v-if="isQRCode && !isStreamRunning" color="warning" size="lg" style="margin-left: 12px !important;"  class="ms-auto" @click="isQRCode=false">Use Camera</parking-button>
+          </div>
         </div>
       </main>
     </div>
@@ -38,7 +53,7 @@
               <input class="form-control" type="text" :value="prices" disabled />
             </div>
             <div class="row mt-3" v-if="prices">
-              <parking-button color="danger" size="sm" class="ms-auto">Payment</parking-button>
+              <parking-button color="danger" size="lg" class="ms-auto" @click="onPayment">Payment</parking-button>
             </div>
           </div>
         </div>
@@ -58,6 +73,7 @@ import ParkingButton from "@/components/ParkingButton.vue";
 // import Stomp from "webstomp-client";
 const QRCodeRepository = RepositoryFactory.get('qr_code');
 const ParkingRepository = RepositoryFactory.get('parking');
+const PaymentManagement = RepositoryFactory.get('payment')
 
 const body = document.getElementsByTagName("body")[0];
 
@@ -69,6 +85,7 @@ export default {
   },
   data() {
     return {
+      isQRCode: false,
       qrCode: '',
       userId: '',
       capacity: 0,
@@ -78,6 +95,11 @@ export default {
       checkInDate: '',
       checkOutDate: '',
       prices: 0,
+      paymentId: '',
+
+      // Stream
+      isStreamRunning: false,
+      stream: null,
     }
   },
 
@@ -89,6 +111,89 @@ export default {
     async getData() {
       await this.getQRCode();
       await this.getInfo();
+    },
+
+    async startCamera() {
+      this.isStreamRunning = true;
+      await this.startStream();
+      this.startSending();
+    },
+
+    stopCamera() {
+      this.isStreamRunning = false;
+      this.stopSending();
+      this.stopStream();
+    },
+
+    async startStream() {
+      try {
+        // Request access to the camera
+        this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        this.$refs.video.srcObject = this.stream;
+      } catch (error) {
+        console.error("Error accessing the camera:", error);
+        alert("Unable to access the camera. Please check permissions.");
+      }
+    },
+
+    startSending() {
+      const video = this.$refs.video;
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+
+      this.sendingInterval = setInterval(() => {
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw the current video frame on the canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get the image as a data URL
+        const frameData = canvas.toDataURL("image/jpeg");
+        console.log(frameData)
+
+        // Send the frame to the backend
+        // axios
+        //   .post("http://localhost:8000/api/upload-frame/", { frame: frameData })
+        //   .then((response) => {
+        //     console.log("Frame sent successfully:", response.data);
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error sending frame:", error);
+        //   });
+      }, 100); // Send every 100ms (10 frames per second)
+    },
+
+    stopSending() {
+      if (this.sendingInterval) {
+        clearInterval(this.sendingInterval);
+        this.sendingInterval = null;
+      }
+    },
+
+    stopStream() {
+      if (this.stream) {
+        // Stop all video tracks
+        this.stream.getTracks().forEach((track) => track.stop());
+        this.stream = null;
+      }
+    },
+
+    async onPayment() {
+      console.log(this.paymentId)
+      const subUrl = 'complete/' + this.paymentId;
+      console.log('subUrl', subUrl)
+      const { data } = await PaymentManagement.get('complete/' + this.paymentId);
+      if (data.status == 200) {
+        this.prices = 0
+        this.paymentId = ''
+        this.$toast.show("Payment successfully!", {
+          type: 'error',
+          position: 'bottom',
+          dismissible: true
+        });
+      }
     },
 
     async getInfo() {
@@ -138,6 +243,7 @@ export default {
             this.checkInDate = message.checkInDate
             this.checkOutDate = message.checkOutDate
             this.prices = message.prices
+            this.paymentId = message.paymentId
             if (message.checkType == 'CHECK_IN') {
               this.addOccupation()
               this.$toast.show(message.data, {

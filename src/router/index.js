@@ -87,7 +87,7 @@ const routes = [
   },
   {
     path: "/qr-code",
-    name: "QR Code",
+    name: "Check In",
     component: QRCode,
   },
   
