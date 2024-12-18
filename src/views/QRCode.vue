@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import AppFooter from "@/examples/Footer.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 import { database, ref, onValue } from '@/firebase/firebase';
@@ -74,6 +75,7 @@ import ParkingButton from "@/components/ParkingButton.vue";
 const QRCodeRepository = RepositoryFactory.get('qr_code');
 const ParkingRepository = RepositoryFactory.get('parking');
 const PaymentManagement = RepositoryFactory.get('payment')
+
 
 const body = document.getElementsByTagName("body")[0];
 
@@ -153,15 +155,15 @@ export default {
         const frameData = canvas.toDataURL("image/jpeg");
         console.log(frameData)
 
-        // Send the frame to the backend
-        // axios
-        //   .post("http://localhost:8000/api/upload-frame/", { frame: frameData })
-        //   .then((response) => {
-        //     console.log("Frame sent successfully:", response.data);
-        //   })
-        //   .catch((error) => {
-        //     console.error("Error sending frame:", error);
-        //   });
+        //Send the frame to the backend
+        axios
+          .post("http://localhost:8089/most_common", { frame: frameData })
+          .then((response) => {
+            console.log("Frame sent successfully:", response.data);
+          })
+          .catch((error) => {
+            console.error("Error sending frame:", error);
+          });
       }, 100); // Send every 100ms (10 frames per second)
     },
 
@@ -246,7 +248,7 @@ export default {
             this.paymentId = message.paymentId
             if (message.checkType == 'CHECK_IN') {
               this.addOccupation()
-              this.$toast.show(message.data, {
+              this.$toast.show(message.message, {
                 type: 'success',
                 position: 'bottom',
                 dismissible: true

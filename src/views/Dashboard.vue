@@ -140,5 +140,15 @@ export default {
       }
     }
   },
+
+  watch: {
+    total: function () {
+      this.setCard();
+    },
+    
+    incomeTotal: function () {
+      this.setCard();
+    }
+  }
 };
 </script>
