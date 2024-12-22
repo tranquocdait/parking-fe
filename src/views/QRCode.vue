@@ -75,6 +75,7 @@ import ParkingButton from "@/components/ParkingButton.vue";
 const QRCodeRepository = RepositoryFactory.get('qr_code');
 const ParkingRepository = RepositoryFactory.get('parking');
 const PaymentManagement = RepositoryFactory.get('payment')
+const CheckingRepository = RepositoryFactory.get('checking')
 
 
 const body = document.getElementsByTagName("body")[0];
@@ -143,6 +144,9 @@ export default {
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
 
+      let current = new Date();
+      let isFirst = true;
+
       this.sendingInterval = setInterval(() => {
         // Set canvas dimensions to match video
         canvas.width = video.videoWidth;
@@ -153,13 +157,24 @@ export default {
 
         // Get the image as a data URL
         const frameData = canvas.toDataURL("image/jpeg");
-        console.log(frameData)
+        // console.log(frameData)
 
         //Send the frame to the backend
         axios
-          .post("http://localhost:8089/most_common", { frame: frameData })
+          .post("http://localhost:8089/plate-number", { frame: frameData })
           .then((response) => {
-            console.log("Frame sent successfully:", response.data);
+            // console.log("Frame sent successfully:", response.data);
+            const data = response.data
+            if (data.plate_number && data.plate_number.length) {
+              const runDateTime = new Date();
+              // console.log("runDateTime > current", runDateTime, current)
+              // console.log("runDateTime - current", runDateTime.getTime() - current.getTime())
+              if ((runDateTime.getTime() > current.getTime() + 5000) || isFirst) {
+                isFirst = false;
+                current = runDateTime;
+                this.checking(data.plate_number)
+              }
+            }
           })
           .catch((error) => {
             console.error("Error sending frame:", error);
@@ -183,9 +198,6 @@ export default {
     },
 
     async onPayment() {
-      console.log(this.paymentId)
-      const subUrl = 'complete/' + this.paymentId;
-      console.log('subUrl', subUrl)
       const { data } = await PaymentManagement.get('complete/' + this.paymentId);
       if (data.status == 200) {
         this.prices = 0
@@ -204,6 +216,25 @@ export default {
         const dataResponse = data.data;
         this.occupation = dataResponse.occupation;
         this.capacity = dataResponse.capacity;
+      }
+    },
+
+    async checking(plateNumber) {
+      console.log('call plateNumber')
+      const { data } = await CheckingRepository.get('parking-area/'+ plateNumber);
+      console.log('plateNumber', data)
+      debugger
+      if (data.status == 200) {
+        const dataResponse = data.data;
+        const checkType = dataResponse.check_type
+        if (checkType == "DONT_EXIST") {
+          this.$toast.show(dataResponse.message, {
+            type: 'error',
+            position: 'bottom',
+            dismissible: true
+          });
+        }
+        console.log(dataResponse);
       }
     },
 
@@ -233,14 +264,10 @@ export default {
         datas => {
           this.messages = []
           datas.forEach(data => {
-            console.log('vo day')
             this.messages.push(data.val())
-            console.log(datas.val())
           });
-          console.log('message', this.messages)
           if (this.messages.length > 0) {
             const message = this.messages[this.messages.length - 1];
-            console.log(message)
             this.plateNumber = message.plateNumber
             this.checkInDate = message.checkInDate
             this.checkOutDate = message.checkOutDate

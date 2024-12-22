@@ -3,6 +3,7 @@ import QRCodeRepository from './QRCodeRepository'
 import ParkingManagement from './ParkingManagement'
 import TicketManagement from './TicketManagement'
 import PaymentManagement from './PaymentManagement'
+import CheckingRepository from './CheckingRepository'
 
 const repositories = {
     user: UserRepository,
@@ -10,6 +11,7 @@ const repositories = {
     parking: ParkingManagement,
     ticket: TicketManagement,
     payment: PaymentManagement,
+    checking: CheckingRepository,
 };
 
 export default {
