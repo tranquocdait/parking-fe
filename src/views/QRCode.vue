@@ -22,7 +22,7 @@
               <parking-button v-if="!isStreamRunning" color="primary" size="lg" class="ms-auto" @click="startCamera">Start</parking-button>
               <parking-button v-if="isStreamRunning" color="danger" size="lg" class="ms-auto" @click="stopCamera">Stop</parking-button>
             </template>
-            <parking-button v-if="!isQRCode && !isStreamRunning" color="warning" size="lg" style="margin-left: 12px !important;" class="ms-auto" @click="isQRCode=true">Use QR Code</parking-button>
+            <parking-button v-if="!isQRCode && !isStreamRunning" color="warning" size="lg" style="margin-left: 12px !important;" class="ms-auto" @click="isQRCode=true; openQRCode()">Use QR Code</parking-button>
             <parking-button v-if="isQRCode && !isStreamRunning" color="warning" size="lg" style="margin-left: 12px !important;"  class="ms-auto" @click="isQRCode=false">Use Camera</parking-button>
           </div>
         </div>
@@ -103,6 +103,7 @@ export default {
       // Stream
       isStreamRunning: false,
       stream: null,
+      isLoading: false,
     }
   },
 
@@ -112,8 +113,11 @@ export default {
 
   methods: {
     async getData() {
-      await this.getQRCode();
       await this.getInfo();
+    },
+
+    async openQRCode() {
+      await this.getQRCode();
     },
 
     async startCamera() {
@@ -169,10 +173,11 @@ export default {
               const runDateTime = new Date();
               // console.log("runDateTime > current", runDateTime, current)
               // console.log("runDateTime - current", runDateTime.getTime() - current.getTime())
-              if ((runDateTime.getTime() > current.getTime() + 5000) || isFirst) {
+              const isRunning = runDateTime.getTime() > current.getTime() + 5000;
+              if ( (isRunning && !this.isLoading)|| isFirst) {
                 isFirst = false;
                 current = runDateTime;
-                this.checking(data.plate_number)
+                this.checking(data, frameData)
               }
             }
           })
@@ -218,13 +223,17 @@ export default {
         this.capacity = dataResponse.capacity;
       }
     },
-
-    async checking(plateNumber) {
+    
+    async checking(checkingData, frameData) {
       console.log('call plateNumber')
-      const { data } = await CheckingRepository.get('parking-area/'+ plateNumber);
-      console.log('plateNumber', data)
-      debugger
-      if (data.status == 200) {
+      const plateNumber = checkingData.plate_number
+      try {
+        this.isLoading = true;
+        const { data } = await CheckingRepository.post({
+          'shorted_plate_number': plateNumber,
+          'image': frameData,
+        }, 'parking-area');
+        if (data.status == 200) {
         const dataResponse = data.data;
         const checkType = dataResponse.check_type
         if (checkType == "DONT_EXIST") {
@@ -234,7 +243,34 @@ export default {
             dismissible: true
           });
         }
+        if (checkType == 'CHECK_IN') {
+          this.addOccupation()
+          this.$toast.show(dataResponse.message, {
+            type: 'success',
+            position: 'bottom',
+            dismissible: true
+          });
+        } else if (checkType == 'CHECK_OUT' || checkType == 'WAITING') {
+          this.subOccupation()
+          this.$toast.show(dataResponse.message, {
+            type: 'error',
+            position: 'bottom',
+            dismissible: true
+          });
+        }
+        this.plateNumber = dataResponse.plate_number
+        this.checkInDate = dataResponse.check_in_date
+        this.checkOutDate = dataResponse.check_out_date
+        this.prices = dataResponse.prices
+        this.paymentId = dataResponse.payment_id
         console.log(dataResponse);
+      }
+      }
+      catch(err) {
+        console.log(err)
+      }
+      finally {
+        this.isLoading = false;
       }
     },
 

@@ -31,7 +31,7 @@ export default {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 99;
+	z-index: 999999;
 	background-color: rgba(0, 0, 0, 0.2);
 
 	display: flex;
@@ -42,6 +42,7 @@ export default {
 		border-radius: 1rem;
 		background: white;
 		padding: 32px;
+		width: 70%;
 	}
 
 	.popup-close {

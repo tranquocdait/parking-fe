@@ -1,4 +1,61 @@
 <template>
+  <Popup v-if="openModal">
+    <div class="row"  @click.self="onParentClick">
+      <!-- <div class="col-12">
+        <label for="vehicel" col="12">Vehicel</label>
+        <parking-input 
+          type="text" 
+          v-model="rawData.plate_number"
+          label="Start date"
+          col="12"
+          size="lg" 
+          disabled/>
+      </div> -->
+      <parking-input 
+        type="text" 
+        v-model="rawData.plate_number"
+        label="Plate Number"
+        col="6"
+        size="lg" 
+        disabled/>
+      <parking-input 
+        type="text" 
+        v-model="rawData.vehicle_owner"
+        label="User"
+        col="6"
+        size="lg" 
+        disabled/>
+      <parking-input 
+        type="text" 
+        v-model="rawData.check_in_date"
+        label="Check In Date"
+        col="6"
+        size="lg" 
+        disabled/>
+
+      <div class="col-6">
+        <label for="check-in" class="form-label">Check In Image</label>
+        <img :src="rawData.check_in_url" alt="Check In" width="200" height="200" class="form-control"/>
+      </div>
+
+      <parking-input 
+        type="text" 
+        v-model="rawData.check_out_date"
+        label="Check Out Date"
+        col="6"
+        size="lg" 
+        disabled/>
+
+      <div class="col-6">
+        <label for="check-in" class="form-label">Check Out Image</label>
+        <img :src="rawData.check_in_url" alt="Check Out" width="200" height="200" class="form-control"/>
+      </div>
+    </div>
+    
+    <div class="modal-footer d-flex">
+      <parking-button color="primary" size="sm" @click="openModal = !openModal">Cancel</parking-button>
+    </div>
+  </Popup>
   <div class="py-4 container-fluid">
     <div class=" row">
       <div class="col-12">
@@ -71,7 +128,7 @@
                       </td>
                       <td class="align-middle">
                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip"
-                          data-original-title="Edit user">More</a>
+                          data-original-title="Edit user" @click="openRigisterModal(item)">More</a>
                       </td>
                     </tr>
                   </template>
@@ -89,13 +146,17 @@
 </template>
 
 <script>
+import Popup from '@/components/Popup.vue';
+import ParkingInput from "@/components/ParkingInput.vue";
 import ParkingButton from "@/components/ParkingButton.vue";
 import RepositoryFactory from '@/repository/RepositoryFactory';
 const ParkingRepository = RepositoryFactory.get('parking')
 export default {
-  name: "tables",
+  name: "parking-managment",
   components: {
-    ParkingButton
+    ParkingButton,
+    ParkingInput,
+    Popup,
   },
 
   data() {
@@ -103,6 +164,10 @@ export default {
       keyword: '',
       type: 0,
       data_list: null,
+
+      // more
+      openModal: false,
+      rawData: {},
     };
   },
 
@@ -133,7 +198,13 @@ export default {
 
     isCheckout(checkOutDate) {
       return checkOutDate && checkOutDate.trim() !== ''
-    }
+    },
+
+    openRigisterModal(item) {
+      console.log(item);
+      this.rawData = item
+      this.openModal = !this.openModal;
+    },
   }
 };
 </script>
@@ -154,4 +225,12 @@ export default {
     }
   }
 }
+.popup-inner {
+  width: 70%;
+  
+  img {
+    width: 50% !important;
+  }
+}
+
 </style>
