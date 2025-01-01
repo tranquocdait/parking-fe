@@ -183,7 +183,7 @@ export default {
     async getData() {
       const { data } = await ParkingRepository.post({
         'page': 0,
-        'page_size': 100,
+        'page_size': 40,
         'keyword': this.keyword,
         'type': this.type,
       }, 'tracking-management');

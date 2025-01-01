@@ -109,7 +109,7 @@
                           placeholder="Hoda" 
                           v-model="vehicleBrand"
                           name="vehicleBrand" 
-                          label="Vehicle brand"
+                          label="Vehicle Brand"
                           col="6"
                           size="lg" />
                         <parking-input 
@@ -117,7 +117,7 @@
                           placeholder="Air Blade" 
                           v-model="vehicleModel"
                           name="vehicleModel" 
-                          label="Vehicle brand"
+                          label="Vehicle Model"
                           col="6"
                           size="lg" />
                         <parking-input 

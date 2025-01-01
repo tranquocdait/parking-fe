@@ -106,7 +106,7 @@ export default {
     async getData() {
       const { data } = await TicketManagement.post({
         'page': 0,
-        'page_size': 100,
+        'page_size': 40,
         'keyword': this.keyword,
         'type': this.type,
       }, 'list');

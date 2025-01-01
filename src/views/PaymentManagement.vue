@@ -245,7 +245,7 @@ export default {
     async getTicketData() {
       const { data } = await TicketManagement.post({
         'page': 0,
-        'page_size': 100,
+        'page_size': 40,
         'keyword': this.keyword,
         'type': this.type,
       }, 'list');
@@ -262,7 +262,7 @@ export default {
     async getVehicelData() {
       const { data } = await ParkingRepository.post({
         'page': 0,
-        'page_size': 100,
+        'page_size': 40,
       }, 'vehicle-management');
       if (data.status == 200) {
         this.vehicles = data.data.data_list
@@ -272,7 +272,7 @@ export default {
     async getData() {
       const { data } = await PaymentManagement.post({
         'page': 0,
-        'page_size': 100,
+        'page_size': 40,
         'keyword': this.keyword,
         'type': this.type,
       }, 'list');

@@ -104,6 +104,8 @@ export default {
       isStreamRunning: false,
       stream: null,
       isLoading: false,
+
+      isPayment: false,
     }
   },
 
@@ -150,6 +152,7 @@ export default {
 
       let current = new Date();
       let isFirst = true;
+      this.isPayment = false
 
       this.sendingInterval = setInterval(() => {
         // Set canvas dimensions to match video
@@ -174,7 +177,7 @@ export default {
               // console.log("runDateTime > current", runDateTime, current)
               // console.log("runDateTime - current", runDateTime.getTime() - current.getTime())
               const isRunning = runDateTime.getTime() > current.getTime() + 5000;
-              if ( (isRunning && !this.isLoading)|| isFirst) {
+              if ((isRunning && !this.isLoading && !this.isPayment) || isFirst) {
                 isFirst = false;
                 current = runDateTime;
                 this.checking(data, frameData)
@@ -207,6 +210,7 @@ export default {
       if (data.status == 200) {
         this.prices = 0
         this.paymentId = ''
+        this.isPayment = false
         this.$toast.show("Payment successfully!", {
           type: 'error',
           position: 'bottom',
@@ -263,7 +267,9 @@ export default {
         this.checkOutDate = dataResponse.check_out_date
         this.prices = dataResponse.prices
         this.paymentId = dataResponse.payment_id
-        console.log(dataResponse);
+        if (this.paymentId) {
+          this.isPayment = true;
+        }
       }
       }
       catch(err) {
@@ -280,7 +286,6 @@ export default {
         const dataResponse = data.data;
         this.qrCode = dataResponse.qr_code;
         this.userId = dataResponse.user_id;
-        console.log("vo day")
         this.getMessage();
       }
     },
@@ -302,7 +307,7 @@ export default {
           datas.forEach(data => {
             this.messages.push(data.val())
           });
-          if (this.messages.length > 0) {
+          if (this.messages.length > 0 && !this.isStreamRunning) {
             const message = this.messages[this.messages.length - 1];
             this.plateNumber = message.plateNumber
             this.checkInDate = message.checkInDate
