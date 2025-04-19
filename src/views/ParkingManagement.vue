@@ -48,7 +48,7 @@
 
       <div class="col-6">
         <label for="check-in" class="form-label">Check Out Image</label>
-        <img :src="rawData.check_in_url" alt="Check Out" width="200" height="200" class="form-control"/>
+        <img :src="rawData.check_out_url" alt="Check Out" width="200" height="200" class="form-control"/>
       </div>
     </div>
     

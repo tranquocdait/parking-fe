@@ -176,8 +176,8 @@ export default {
               const runDateTime = new Date();
               // console.log("runDateTime > current", runDateTime, current)
               // console.log("runDateTime - current", runDateTime.getTime() - current.getTime())
-              const isRunning = runDateTime.getTime() > current.getTime() + 5000;
-              if ((isRunning && !this.isLoading && !this.isPayment) || isFirst) {
+              const isRunning = runDateTime.getTime() > current.getTime() + 1000;
+              if ((isRunning || isFirst) && !this.isLoading && !this.isPayment) {
                 isFirst = false;
                 current = runDateTime;
                 this.checking(data, frameData)
@@ -187,7 +187,7 @@ export default {
           .catch((error) => {
             console.error("Error sending frame:", error);
           });
-      }, 100); // Send every 100ms (10 frames per second)
+      }, 1000); // Send every 100ms (10 frames per second)
     },
 
     stopSending() {
@@ -238,39 +238,40 @@ export default {
           'image': frameData,
         }, 'parking-area');
         if (data.status == 200) {
-        const dataResponse = data.data;
-        const checkType = dataResponse.check_type
-        if (checkType == "DONT_EXIST") {
-          this.$toast.show(dataResponse.message, {
-            type: 'error',
-            position: 'bottom',
-            dismissible: true
-          });
+          const dataResponse = data.data;
+          const checkType = dataResponse.check_type
+          if (checkType == "DONT_EXIST") {
+            this.$toast.show(dataResponse.message, {
+              type: 'error',
+              position: 'bottom',
+              dismissible: true
+            });
+            return;
+          }
+          if (checkType == 'CHECK_IN') {
+            this.addOccupation()
+            this.$toast.show(dataResponse.message, {
+              type: 'success',
+              position: 'bottom',
+              dismissible: true
+            });
+          } else if (checkType == 'CHECK_OUT' || checkType == 'WAITING') {
+            this.subOccupation()
+            this.$toast.show(dataResponse.message, {
+              type: 'error',
+              position: 'bottom',
+              dismissible: true
+            });
+          }
+          this.plateNumber = dataResponse.plate_number
+          this.checkInDate = dataResponse.check_in_date
+          this.checkOutDate = dataResponse.check_out_date
+          this.prices = dataResponse.prices
+          this.paymentId = dataResponse.payment_id
+          if (this.paymentId) {
+            this.isPayment = true;
+          }
         }
-        if (checkType == 'CHECK_IN') {
-          this.addOccupation()
-          this.$toast.show(dataResponse.message, {
-            type: 'success',
-            position: 'bottom',
-            dismissible: true
-          });
-        } else if (checkType == 'CHECK_OUT' || checkType == 'WAITING') {
-          this.subOccupation()
-          this.$toast.show(dataResponse.message, {
-            type: 'error',
-            position: 'bottom',
-            dismissible: true
-          });
-        }
-        this.plateNumber = dataResponse.plate_number
-        this.checkInDate = dataResponse.check_in_date
-        this.checkOutDate = dataResponse.check_out_date
-        this.prices = dataResponse.prices
-        this.paymentId = dataResponse.payment_id
-        if (this.paymentId) {
-          this.isPayment = true;
-        }
-      }
       }
       catch(err) {
         console.log(err)
@@ -314,6 +315,7 @@ export default {
             this.checkOutDate = message.checkOutDate
             this.prices = message.prices
             this.paymentId = message.paymentId
+            console.log(message);
             if (message.checkType == 'CHECK_IN') {
               this.addOccupation()
               this.$toast.show(message.message, {
